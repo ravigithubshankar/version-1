@@ -102,10 +102,10 @@ def main():
 
     # ── AlphaRed: enable overnight agent ─────────────────────────────────
     run.enable_agent(
-        openrouter_api_key  = OPENROUTER_KEY,
+        openrouter_api_key  = "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",
         train_file_path     = os.path.abspath(__file__),
         max_experiments     = 20,
-        time_per_experiment = 180,   # 3 min per experiment
+        time_per_experiment = 180,
     )
 
     # ── Setup ─────────────────────────────────────────────────────────────
