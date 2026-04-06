@@ -7,8 +7,8 @@ import uuid
 import torch
 from .utils.system_telemetry import get_system_metrics
 from .utils.variable_observer import VariableObserver
-from .diagnostics_engine import DiagnosticsEngine
-from .ratchet_loop import RatchetLoop, AgentBudget
+from .diagnostics.engine import DiagnosticsEngine   # ✅ correct
+from .diagnostics.ratchet_loop import RatchetLoop, AgentBudget  # ✅ correct
 
 import sys
 
