@@ -21,12 +21,16 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from alphared.run_session import RunSession
 
 # ── Config ────────────────────────────────────────────────────────────────
-EPOCHS        = 10
-BATCH_SIZE    = 64
-LR            = 0.001
-DEVICE        = "cuda" if torch.cuda.is_available() else "cpu"
-OPENROUTER_KEY = os.environ.get("OPENROUTER_API_KEY", "")  # set your key here
+EPOCHS         = 10
+BATCH_SIZE     = 64
+LR             = 0.001
+DEVICE         = "cuda" if torch.cuda.is_available() else "cpu"
+OPENROUTER_KEY = os.environ.get("OPENROUTER_API_KEY", "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")
 ALPHARED_HOST  = os.environ.get("ALPHARED_HOST", "http://localhost:8000")
+
+# Agent subprocess లో infinite loop prevent చేయడానికి
+ENABLE_AGENT   = not bool(os.environ.get("ALPHARED_AGENT_RUN"))
+
 
 # ── Model ─────────────────────────────────────────────────────────────────
 class MNISTNet(nn.Module):
@@ -51,8 +55,8 @@ def get_loaders():
         transforms.ToTensor(),
         transforms.Normalize((0.1307,), (0.3081,)),
     ])
-    train_ds = datasets.MNIST("./data", train=True,  download=True, transform=transform)
-    val_ds   = datasets.MNIST("./data", train=False, download=True, transform=transform)
+    train_ds     = datasets.MNIST("./data", train=True,  download=True, transform=transform)
+    val_ds       = datasets.MNIST("./data", train=False, download=True, transform=transform)
     train_loader = DataLoader(train_ds, batch_size=BATCH_SIZE, shuffle=True)
     val_loader   = DataLoader(val_ds,   batch_size=BATCH_SIZE, shuffle=False)
     return train_loader, val_loader
@@ -100,13 +104,14 @@ def main():
     )
     run.start()
 
-    # ── AlphaRed: enable overnight agent ─────────────────────────────────
-    run.enable_agent(
-        openrouter_api_key  = "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",
-        train_file_path     = os.path.abspath(__file__),
-        max_experiments     = 20,
-        time_per_experiment = 180,
-    )
+    # ── AlphaRed: enable overnight agent (only in main run, not subprocess) ──
+    if ENABLE_AGENT:
+        run.enable_agent(
+            openrouter_api_key  = OPENROUTER_KEY,
+            train_file_path     = os.path.abspath(__file__),
+            max_experiments     = 20,
+            time_per_experiment = 180,
+        )
 
     # ── Setup ─────────────────────────────────────────────────────────────
     train_loader, val_loader = get_loaders()
@@ -142,7 +147,10 @@ def main():
     # ── AlphaRed: finish -- saves model, starts agent if enabled ─────────
     run.finish()
     print("\nTraining complete.")
-    print("Agent running in background -- check alphared_agent/ for changes.md")
+    if ENABLE_AGENT:
+        print("Agent running in background -- check alphared_agent/ for changes.md")
+    else:
+        print("Agent run complete (subprocess mode).")
 
 
 if __name__ == "__main__":
