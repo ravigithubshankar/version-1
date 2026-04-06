@@ -24,7 +24,7 @@ import subprocess
 import threading
 from dataclasses import dataclass, field
 from typing import Optional, Callable
-from .diagnostics_engine import DiagnosticsEngine, ProblemType, DiagnosisResult
+from .engine import DiagnosticsEngine, ProblemType, DiagnosisResult
 from .hypothesis_engine import HypothesisEngine, Hypothesis
 from .changes_logger import ChangesLogger, ExperimentRecord
 
