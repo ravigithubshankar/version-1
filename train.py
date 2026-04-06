@@ -147,10 +147,14 @@ def main():
     # ── AlphaRed: finish -- saves model, starts agent if enabled ─────────
     run.finish()
     print("\nTraining complete.")
-    if ENABLE_AGENT:
-        print("Agent running in background -- check alphared_agent/ for changes.md")
+    if ENABLE_AGENT and run._ratchet_thread and run._ratchet_thread.is_alive():
+        print("Agent running -- press Ctrl+C to stop, or wait for completion...")
+        try:
+            run._ratchet_thread.join()  # wait until agent finishes
+        except KeyboardInterrupt:
+            print("\nAgent stopped by user.")
     else:
-        print("Agent run complete (subprocess mode).")
+        print("Agent run complete.")
 
 
 if __name__ == "__main__":
