@@ -137,7 +137,7 @@ _STATIC_LIBRARY = {
 }
 
 # OpenRouter -- routes to best available model
-OPENROUTER_MODEL   = "meta-llama/llama-3.3-70b-instruct"
+OPENROUTER_MODEL   = "llama-3.1-8b-instant"
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 openrouter_api_key="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"
 
