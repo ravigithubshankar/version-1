@@ -15,7 +15,7 @@ from alphared.diagnostics.ratchet_loop import RatchetLoop, AgentBudget
 
 OPENROUTER_KEY = os.environ.get(
     "OPENROUTER_API_KEY",
-    "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"
+    "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"
 )
 
 # Baseline from last training run -- update these after train.py
