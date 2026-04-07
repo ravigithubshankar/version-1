@@ -152,7 +152,7 @@ class HypothesisEngine:
       - Same as AutoResearch: agent reads code, proposes concrete edits
 
     Static mode (no key):
-      - Uses _STATIC_LIBRARY
+      - Uses _STATIC_LIBRARy
       - For testing / offline use
     """
 
