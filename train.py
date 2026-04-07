@@ -28,8 +28,6 @@ DEVICE         = "cuda" if torch.cuda.is_available() else "cpu"
 OPENROUTER_KEY = os.environ.get("OPENROUTER_API_KEY", "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")
 ALPHARED_HOST  = os.environ.get("ALPHARED_HOST", "http://localhost:8000")
 
-# Agent subprocess లో infinite loop prevent చేయడానికి
-ENABLE_AGENT   = not bool(os.environ.get("ALPHARED_AGENT_RUN"))
 
 
 # ── Model ─────────────────────────────────────────────────────────────────
@@ -104,15 +102,6 @@ def main():
     )
     run.start()
 
-    # ── AlphaRed: enable overnight agent (only in main run, not subprocess) ──
-    if ENABLE_AGENT:
-        run.enable_agent(
-            openrouter_api_key  = OPENROUTER_KEY,
-            train_file_path     = os.path.abspath(__file__),
-            max_experiments     = 20,
-            time_per_experiment = 180,
-        )
-
     # ── Setup ─────────────────────────────────────────────────────────────
     train_loader, val_loader = get_loaders()
     model     = MNISTNet().to(DEVICE)
@@ -144,17 +133,12 @@ def main():
             "lr":             LR,
         })
 
-    # ── AlphaRed: finish -- saves model, starts agent if enabled ─────────
+    # ── AlphaRed: finish ─────────────────────────────────────────────────
     run.finish()
-    print("\nTraining complete.")
-    if ENABLE_AGENT and run._ratchet_thread and run._ratchet_thread.is_alive():
-        print("Agent running -- press Ctrl+C to stop, or wait for completion...")
-        try:
-            run._ratchet_thread.join()  # wait until agent finishes
-        except KeyboardInterrupt:
-            print("\nAgent stopped by user.")
-    else:
-        print("Agent run complete.")
+    print("\nTraining complete!")
+    print(f"   val_accuracy: {val_acc:.4f}")
+    print(f"   val_loss:     {val_loss:.4f}")
+    print("\nTo run agent: python agent.py")
 
 
 if __name__ == "__main__":
