@@ -14,8 +14,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from alphared.diagnostics.ratchet_loop import RatchetLoop, AgentBudget
 
 OPENROUTER_KEY = os.environ.get(
-    "OPENROUTER_API_KEY",
-    "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"
+    "OPENROUTER_API_KEY"
+    
 )
 
 # Baseline from last training run -- update these after train.py
